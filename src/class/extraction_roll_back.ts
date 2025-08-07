@@ -13,6 +13,7 @@ export class Extract_day
     size_range: number;
     url_promise: string [] | null;
     departement: string;
+    counter: number;
     complet_batch: number;
     incomplet_batch: number;
     obj_date: Extract_date_roll_back;
@@ -22,6 +23,7 @@ export class Extract_day
     {
         this.token = token;
         this.departement = departement;
+        this.counter = 0;
         this.url_promise = [];
         this.obj_date = obj_date;
         this.total_size_day = 0;

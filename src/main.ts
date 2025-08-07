@@ -5,7 +5,6 @@ import fs from 'fs';
 import {Extract_date_roll_back} from "./class/date_roll_back"
 import {Extract_day} from "./class/extraction_roll_back"
 import {sleep} from "./utils/utils"
-import { url } from "inspector";
 
 
 //try catch here    
@@ -34,11 +33,13 @@ async function extract_day_job(token: Token, roller_date:Extract_date_roll_back,
                 file systeme managment. departement/date/date-range-batch_size-total_size
             */
             const creation_date = roller.obj_date.dateRight.toISOString();
-                if(!fs.existsSync(`./data/${roller.departement}`))
-                    fs.mkdirSync('./data/'+roller.departement)
-                if(!fs.existsSync(`./data/${roller.departement}/${creation_date}`))
-                    fs.mkdirSync(`./data/${roller.departement}/${creation_date}`)
-                fs.writeFileSync(`./data/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
+                if(!fs.existsSync(`./data_queu`))
+                    fs.mkdirSync(`./data_queu`)
+                if(!fs.existsSync(`./data_queu/${roller.departement}`))
+                    fs.mkdirSync(`./data_queu/${roller.departement}`)
+                if(!fs.existsSync(`./data_queu/${roller.departement}/${creation_date}`))
+                    fs.mkdirSync(`./data_queu/${roller.departement}/${creation_date}`)
+                fs.writeFileSync(`./data_queu/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
             });
         }
 }
@@ -98,22 +99,14 @@ function get_departement(dep: number): string
     if(dep < 10)
         return( '0' + dep);
     else if(dep == 200)
-        return("2a")
+        return("2A")
     else if(dep == 201)
-        return("2b");
+        return("2B");
     else if(dep > 95)
         return(String(dep + 875))
     return(String(dep));
 }
 
-// async function get_good_folder_day(date: Date, departement: string): Promise<string | undefined>
-// {
-//     const dirr = "./data/" + departement;
-//     const files = await fs.readdir(dirr.toString());
-//     const file = files.find((f) => f.split("T",2)[0] == date.toISOString().split("T",2)[0] )
-//     console.log("file: " + file);
-//     return (file);
-// }
 
 async function main(argv: number)
 {
@@ -121,6 +114,7 @@ async function main(argv: number)
     let corse = 0;
     let departement;
     let date = new Date();
+
     const token: Token | null = await getToken();
     if(!token)
     {
@@ -137,22 +131,24 @@ async function main(argv: number)
             {
                 departement = get_departement(200);
                 corse = 1;
-                continue;
             }
             else
             {
                 console.log("departement: ", get_departement(201))
                 departement = get_departement(201);
-                i++;
-                continue;
+                corse= 2;
             }
         }
-        departement = get_departement(i);
+        else
+            departement = get_departement(i);
         await run_extraction(departement, token);
-        i++;
+        if(i == 20 && corse == 1)
+            continue;
+        else
+            i++;
         
     }
-    
+    i = 1;
 }
 
 main(0);
