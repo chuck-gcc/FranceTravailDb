@@ -75,6 +75,7 @@ export class Extract_day
             }
         })
     }
+    
     create_promise_url()
     {
         if(this.header_status == 0)
