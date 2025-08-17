@@ -1,7 +1,7 @@
 import { Token, getToken } from "../token/token";
 import dotenv from "dotenv"
 import axios from "axios";
-import fs from "fs";
+import { promises as fs } from 'fs';
 import {Extract_date_roll_back} from "./class/date_roll_back"
 import {Extract_day} from "./class/extraction_roll_back"
 import {sleep} from "./utils/utils"
@@ -26,19 +26,19 @@ async function extract_day_job(token: Token, roller_date:Extract_date_roll_back,
             })
         })
 
-        const r = (await axios.all(res))
-        .forEach((res, i) => {
-            console.log(`Réponse ${i + 1}:`, res.statusText);
-            /*
-                file systeme managment. departement/date/date-range-batch_size-total_size
-            */
-        const creation_date = roller.obj_date.dateRight.toISOString();
-            if(!fs.existsSync(`./data/${roller.departement}`))
-                fs.mkdirSync('./data/'+roller.departement)
-            if(!fs.existsSync(`./data/${roller.departement}/${creation_date}`))
-                fs.mkdirSync(`./data/${roller.departement}/${creation_date}`)
-            fs.writeFileSync(`./data/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
-        });
+        // const r = (await axios.all(res))
+        // .forEach((res, i) => {
+        //     console.log(`Réponse ${i + 1}:`, res.statusText);
+        //     /*
+        //         file systeme managment. departement/date/date-range-batch_size-total_size
+        //     */
+        // const creation_date = roller.obj_date.dateRight.toISOString();
+        //     if(!fs.existsSync(`./data/${roller.departement}`))
+        //         fs.mkdirSync('./data/'+roller.departement)
+        //     if(!fs.existsSync(`./data/${roller.departement}/${creation_date}`))
+        //         fs.mkdirSync(`./data/${roller.departement}/${creation_date}`)
+        //     fs.writeFileSync(`./data/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
+        // });
     }
 }
 
@@ -117,22 +117,13 @@ function get_departement(dep: number): string
     return(String(dep));
 }
 
-function get_good_folder_day(date: Date, departement: string)
+async function get_good_folder_day(date: Date, departement: string): Promise<string | undefined>
 {
     const dirr = "./data/" + departement;
-    console.log("le dir. est  " + dirr);
-    fs.readdir(dirr, (err,folders) => {
-        if(err)
-            console.log("err");
-        else
-        {
-            folders.forEach(folder => {
-                if(folder == date.toISOString())
-                    console.log(date.toISOString());
-            })
-        }
-    });
-    
+    const files = await fs.readdir(dirr.toString());
+    const file = files.find((f) => f.split("T",2)[0] == date.toISOString().split("T",2)[0] )
+    console.log("file: " + file);
+    return (file);
 }
 
 async function main(argv: number)
@@ -142,12 +133,12 @@ async function main(argv: number)
     let departement;
     let date = new Date();
 
-    if(argv == 1)
+    if(argv)
     {
         console.log("argv == 10");
         console.log("La date est " + date.toISOString());
-        get_good_folder_day(date,"74");
-        
+        let path: string | undefined =  await get_good_folder_day(date,"74");
+        console.log("le folder de travail est: " + path);
     }
     else
     {
