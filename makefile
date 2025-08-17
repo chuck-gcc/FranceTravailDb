@@ -20,5 +20,3 @@ r:
 t: 
 	npm run test
 
-scp: fclean
-	scp -r -P 2021 ../../franceDb/offres_emploi  ast@192.168.1.147:/home/ast/franceDb/
