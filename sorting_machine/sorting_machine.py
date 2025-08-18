@@ -1,8 +1,7 @@
 import json
-import hashlib
 import pandas as pd
 import os
-import database_manage
+from database_manage import DB
 
 def get_files_lst(dirpath):
     try:
@@ -11,7 +10,7 @@ def get_files_lst(dirpath):
     except:
         return(None)
 
-def get_obj_json(filepath):
+def get_offerts_result(filepath):
     with open(filepath,"r") as f:
         try:
             data = json.load(f)
@@ -46,6 +45,17 @@ def get_path_liste(dirpath):
     return (path_liste)
 
  
+def add_to_db(path_list, db:DB):
+    print(path_list)
+    for path in path_list:
+        offers = get_offerts_result(path)
+        for offer in offers:
+            json_offer = json.dumps(offer)
+            binary_offer = bytes(json_offer,'utf-8')
+            if(db.is_on_db(binary_offer) == 0):
+                db.cursor.execute(""" INSERT INTO offers (hash) VALUES (?)""", (binary_offer,))
+                db.db.commit()
+                print("offer add")
     
 
 
@@ -60,29 +70,32 @@ def main(departement):
         return
     
     #connect to the database
-    db = database_manage.DB()
-    db.print_table()
-    # db.print_table()
-    
+    db = DB()
     
     print("Start of processing" ,len(path_list), "files\n")
-
-    path = path_list[0]
-    obj = get_obj_json(path)
-    json_data = json.dumps(obj[0])
-    binary_data = bytes(json_data, 'utf-8')
+    add_to_db(path_list,db)
     
 
-    db.cursor.execute(""" INSERT INTO offers (hash) VALUES (?)""", (binary_data,))
-    db.db.commit()
-    db.cursor.execute(""" SELECT hash FROM offers""")
-    d  = bytes(db.cursor.fetchone()[0]).decode('utf-8')
-    data = json.loads(d)
+    # path = path_list[0]
+    # jobj = get_obj_json(path)
+    # json_data = json.dumps(jobj[0])
+    # binary_data = bytes(json_data, 'utf-8')
+    # hash_data = hashlib.sha256()
+    # hash_data.update(binary_data)
+
+    # db.cursor.execute(""" INSERT INTO offers (hash) VALUES (?)""", (binary_data,))
+    # db.db.commit()
+    # db.cursor.execute(""" SELECT hash FROM offers""")
+    # d  = bytes(db.cursor.fetchone()[0]).decode('utf-8')
+    # hash_data2 = hashlib.sha256(db.cursor.fetchone()[0])
+    # data = json.loads(d)
     
     
     
-    print(type(d))
+    #print(hash_data.hexdigest())
     # count = 0
+    #print(hash_data2.hexdigest())
+
     # #build the path and get the object json and process the object
     # for file in files_list:
     #     filepath = dirpath + "/" +file
