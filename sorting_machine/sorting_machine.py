@@ -67,19 +67,35 @@ def add_batch_to_db(path_list, db:DB):
         os.remove(path)
     
 
-def main(departement):
-
-    #get file list to check
-    dirpath = '/home/cc/Documents/data_worker/data/'+ str(departement)
-    
-    # get the list path of files to process
-    path_list = get_path_liste(dirpath)
-    if(path_list == None or len(path_list) <= 0):
+def get_department(idx):
+    if(idx < 1):
         return
-    
-    #connect to the database
-    db = DB()
-    print("Start of processing" ,len(path_list), "files\n")
-    add_batch_to_db(path_list, db)
+    elif(idx > 0 and idx < 10):
+        return("0"+str(idx))
+    elif(idx > 9 and idx < 96):
+        return(str(idx))
+    elif(idx > 95 and idx):
+        return(str(idx + 875))
 
-main(74)
+
+def main():
+
+    i = 1
+    while i <= 101:
+        departement = get_department(i)
+        #get file list to check
+        dirpath = '/home/cc/Documents/data_worker/data/'+ str(departement)
+        
+        # get the list path of files to process
+        path_list = get_path_liste(dirpath)
+        if(path_list == None or len(path_list) <= 0):
+            i+=1
+            continue
+        
+        #connect to the database
+        db = DB()
+        print("Start of processing" ,len(path_list), "files\n")
+        add_batch_to_db(path_list, db)
+        i+=1
+
+main()

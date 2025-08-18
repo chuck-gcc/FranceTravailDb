@@ -128,7 +128,7 @@ function get_departement(dep: number): string
 
 async function main(argv: number)
 {
-    let i = 13;
+    let i = 1;
     let corse = 0;
     let departement;
     let date = new Date();
@@ -161,8 +161,8 @@ async function main(argv: number)
                     continue;
                 }
             }
-            // departement = get_departement(i);
-            // await run_extraction(departement);
+            departement = get_departement(i);
+            await run_extraction(departement);
 
             i++;
             
