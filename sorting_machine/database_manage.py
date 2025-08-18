@@ -1,6 +1,5 @@
 
 import sqlite3
-import hashlib
 
 
 def connect_to_db():
@@ -24,7 +23,7 @@ class DB:
         self.cursor.execute(
         """CREATE TABLE IF NOT EXISTS offers ( 
             id          INTEGER PRIMARY KEY,
-            offer       BLOB
+            offer       BLOB,
             offer_hash  STRING
         );""")
         print("Data base initialisation: OK")
@@ -50,24 +49,22 @@ class DB:
         """DROP TABLE (?);""", name)
     
     #convert binary offer to hash and check the hash table 
-    def is_on_db(self, binary_offer: bytes):
-        offer_hash = hashlib.sha256()
-        offer_hash.update(binary_offer)
-        hash = str(offer_hash.hexdigest())
+    def is_on_db(self, binary_offer: bytes, hash: str):
+        
         self.cursor.execute("""SELECT hash FROM offers_hash WHERE hash = ?""",(hash,))
         result = self.cursor.fetchall()
-        if(result == 0):
+        if(len(result) == 0):
             print(hash)
-            print("the offer" + hash +"isn't in DB")
             return(0)
         return(1)
 
     def update_hash_table(self, hash: str):
-        self.cursor.execute(""" INSERT INTO offers_hash (offert_hash) VALUES (?) """, (hash,))
+        self.cursor.execute(""" INSERT INTO offers_hash (hash) VALUES (?) """, (hash,))
+        print("UPDATE hash table")
 
-    def update_offers_table(self, binary_offer: bytes):
-        offer_hash = hashlib.sha256()
-        offer_hash.update(binary_offer)
-        hash = str(offer_hash.hexdigest())
+    def update_offers_table(self, binary_offer: bytes, hash: str):
         self.update_hash_table(hash)
-        self.cursor.execute("""INSERT INTO offers (offer, offer_hash) VALUES (?,?)""", (binary_offer,hash))
+        self.cursor.execute("""INSERT INTO offers (offer, offer_hash) VALUES (?,?)""", (binary_offer,hash,))
+        print("UPDATE offerts table")
+        self.db.commit()
+        

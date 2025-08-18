@@ -16,7 +16,12 @@ clean:
 	rm -rf data/*
 	rm -rf sorting_machine/__pycache__
 
-fclean: clean
+cleandb:
+	rm -f db/*
+
+fclean: clean cleandb
+	
+aclean: clean cleandb
 	rm -rf node_modules
 
 data:
