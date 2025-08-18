@@ -61,7 +61,7 @@ async function departement_worker( departement: string, from: Date, to: Date) {
     const roller: Extract_day | null = new Extract_day(token,departement,date_roller);
 
     //range size = how many day back
-    while(idx < 3)
+    while(idx < 2)
     {
         console.log(`Iteration ${idx}`);
         await roller.get_header_data();
