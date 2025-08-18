@@ -38,7 +38,7 @@ export async function getToken(): Promise<any | null> {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
         });
-        console.log("✅ Token reçu :", res.data);
+        //console.log("✅ Token reçu :", res.data);
         return res.data;
     } catch (error: any) {
         console.error("❌ Erreur axios:", error.response?.data || error.message);

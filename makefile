@@ -21,7 +21,7 @@ cleandb:
 
 fclean: clean cleandb
 	
-aclean: clean cleandb
+aclean: clean 
 	rm -rf node_modules
 
 data:
