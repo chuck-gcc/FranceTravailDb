@@ -20,6 +20,7 @@ def get_obj_json(filepath):
             print("Loading object error")
             return(None)
 
+
 # Building the path liste of file to process
 def get_path_liste(dirpath):
     path_liste  = []
@@ -44,6 +45,7 @@ def get_path_liste(dirpath):
     #assert(len(path_liste) == 4)
     return (path_liste)
 
+ 
     
 
 
@@ -59,11 +61,27 @@ def main(departement):
     
     #connect to the database
     db = database_manage.DB()
-    db.create_random_table()
     db.print_table()
+    # db.print_table()
+    
+    
+    print("Start of processing" ,len(path_list), "files\n")
+
+    path = path_list[0]
+    obj = get_obj_json(path)
+    json_data = json.dumps(obj[0])
+    binary_data = bytes(json_data, 'utf-8')
     
 
-    print("Start of processing" ,len(path_list), "files\n", path_list)
+    db.cursor.execute(""" INSERT INTO offers (hash) VALUES (?)""", (binary_data,))
+    db.db.commit()
+    db.cursor.execute(""" SELECT hash FROM offers""")
+    d  = bytes(db.cursor.fetchone()[0]).decode('utf-8')
+    data = json.loads(d)
+    
+    
+    
+    print(type(d))
     # count = 0
     # #build the path and get the object json and process the object
     # for file in files_list:

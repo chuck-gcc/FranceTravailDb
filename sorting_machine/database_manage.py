@@ -15,7 +15,12 @@ class DB:
         self.db = connect_to_db()
         self.cursor = self.db.cursor()
         self.cursor.execute(
-        """CREATE TABLE IF NOT EXISTS annonces_hash ( 
+        """CREATE TABLE IF NOT EXISTS offers_hash ( 
+            id INTEGER PRIMARY KEY,
+            hash BLOB
+        );""")
+        self.cursor.execute(
+        """CREATE TABLE IF NOT EXISTS offers ( 
             id INTEGER PRIMARY KEY,
             hash BLOB
         );""")
@@ -37,6 +42,6 @@ class DB:
             i   INTEGER
         );""")
     
-    def delete_table(self, name):
+    def delete_table(self, name: str):
         self.cursor.execute(
-        """DROP TABLE VALUE(?);""", name)
+        """DROP TABLE (?);""", name)

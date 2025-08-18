@@ -14,6 +14,7 @@ git: clean
 
 clean:
 	rm -rf data/*
+	rm -rf sorting_machine/__pycache__
 
 fclean: clean
 	rm -rf node_modules
