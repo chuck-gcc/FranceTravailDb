@@ -4,6 +4,8 @@ NAME= offres_emploi
 ORIGIN =  $(shell git branch --show-current)
 COM=default_push
 
+SORTER_NAME = sorting_machine.py
+
 git: clean
 
 	git add . 
@@ -15,10 +17,14 @@ clean:
 
 fclean: clean
 	rm -rf node_modules
-r: 
-	npm run dev
+
+data:
+	cd job_scrapper && npm run dev
+
 t: 
 	npm run test
 
-py:
-	
+sort:
+	cd sorting_machine && python3 $(SORTER_NAME)
+
+.PHONY: data

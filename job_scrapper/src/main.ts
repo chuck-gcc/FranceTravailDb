@@ -33,11 +33,11 @@ async function extract_day_job(token: Token, roller_date:Extract_date_roll_back,
                 file systeme managment. departement/date/date-range-batch_size-total_size
             */
         const creation_date = roller.obj_date.dateRight.toISOString();
-            if(!fs.existsSync(`./data/${roller.departement}`))
-                fs.mkdirSync('./data/'+roller.departement)
-            if(!fs.existsSync(`./data/${roller.departement}/${creation_date}`))
-                fs.mkdirSync(`./data/${roller.departement}/${creation_date}`)
-            fs.writeFileSync(`./data/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
+            if(!fs.existsSync(`/home/cc/Documents/data_worker/data/${roller.departement}`))
+                fs.mkdirSync('/home/cc/Documents/data_worker/data/'+roller.departement)
+            if(!fs.existsSync(`/home/cc/Documents/data_worker/data/${roller.departement}/${creation_date}`))
+                fs.mkdirSync(`/home/cc/Documents/data_worker/data/${roller.departement}/${creation_date}`)
+            fs.writeFileSync(`/home/cc/Documents/data_worker/data/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
         });
     }
 }

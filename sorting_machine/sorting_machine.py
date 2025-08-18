@@ -50,7 +50,7 @@ def get_path_liste(dirpath):
 def main(departement):
 
     #get file list to check
-    dirpath = '/home/cc/Documents/data_worker/ftdb/data/'+ str(departement)
+    dirpath = '/home/cc/Documents/data_worker/data/'+ str(departement)
     
     # get the list path of files to process
     path_list = get_path_liste(dirpath)

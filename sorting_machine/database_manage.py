@@ -3,7 +3,7 @@ import sqlite3
 
 def connect_to_db():
     try:
-        con = sqlite3.connect("annonces.db")
+        con = sqlite3.connect("../db/annonces.db")
         return(con)
     except:
         print("Error connection db")
