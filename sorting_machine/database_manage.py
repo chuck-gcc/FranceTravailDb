@@ -9,7 +9,6 @@ def connect_to_db():
         print("Error connection db")
 
 
-
 class DB:
 
     def __init__(self):
