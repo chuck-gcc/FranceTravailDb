@@ -2,6 +2,6 @@
 
 Job offer Extraction day worker.
 
-# structure
+# Global structure
 
 ![Alt text](/doc/general_structure.png)

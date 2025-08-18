@@ -20,3 +20,5 @@ r:
 t: 
 	npm run test
 
+py:
+	

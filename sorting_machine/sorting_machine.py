@@ -2,7 +2,6 @@ import json
 import hashlib
 import pandas as pd
 import os
-import base64
 import database_manage
 
 def get_files_lst(dirpath):
@@ -22,7 +21,7 @@ def get_obj_json(filepath):
             return(None)
 
 # Building the path liste of file to process
-def get_path_lst(dirpath):
+def get_path_liste(dirpath):
     path_liste  = []
     # get the folder list to process
     folders_list = os.listdir(dirpath)
@@ -42,10 +41,11 @@ def get_path_lst(dirpath):
         for file in files_list:
             path = dirpath+'/'+ folder + '/' + file
             path_liste.append(path)
-    assert(len(path_liste) == 4)
+    #assert(len(path_liste) == 4)
     return (path_liste)
 
     
+
 
 def main(departement):
 
@@ -53,7 +53,7 @@ def main(departement):
     dirpath = '/home/cc/Documents/data_worker/ftdb/data/'+ str(departement)
     
     # get the list path of files to process
-    path_list = get_path_lst(dirpath)
+    path_list = get_path_liste(dirpath)
     if(path_list == None or len(path_list) <= 0):
         return
     
