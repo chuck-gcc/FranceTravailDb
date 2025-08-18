@@ -45,7 +45,7 @@ def get_path_liste(dirpath):
     return (path_liste)
 
  
-def add_to_db(path_list, db:DB):
+def add_batch_to_db(path_list, db:DB):
     print(path_list)
     for path in path_list:
         offers = get_offerts_result(path)
@@ -53,11 +53,8 @@ def add_to_db(path_list, db:DB):
             json_offer = json.dumps(offer)
             binary_offer = bytes(json_offer,'utf-8')
             if(db.is_on_db(binary_offer) == 0):
-                db.cursor.execute(""" INSERT INTO offers (hash) VALUES (?)""", (binary_offer,))
-                db.db.commit()
-                print("offer add")
+                db.update_offers_table(binary_offer)
     
-
 
 def main(departement):
 

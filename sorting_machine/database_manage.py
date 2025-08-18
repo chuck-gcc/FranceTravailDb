@@ -61,3 +61,13 @@ class DB:
             print("the offer" + hash +"isn't in DB")
             return(0)
         return(1)
+
+    def update_hash_table(self, hash: str):
+        self.cursor.execute(""" INSERT INTO offers_hash (offert_hash) VALUES (?) """, (hash,))
+
+    def update_offers_table(self, binary_offer: bytes):
+        offer_hash = hashlib.sha256()
+        offer_hash.update(binary_offer)
+        hash = str(offer_hash.hexdigest())
+        self.update_hash_table(hash)
+        self.cursor.execute("""INSERT INTO offers (offer, offer_hash) VALUES (?,?)""", (binary_offer,hash))
