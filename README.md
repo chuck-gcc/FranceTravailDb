@@ -4,4 +4,4 @@ Job offer Extraction day worker.
 
 # structure
 
-![Alt text](/doc/structure.png)
+![Alt text](/doc/general_structure.png)
