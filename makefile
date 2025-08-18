@@ -6,7 +6,7 @@ COM=default_push
 
 SORTER_NAME = sorting_machine.py
 
-git: clean
+git: aclean
 
 	git add . 
 	git commit -m $(COM) 

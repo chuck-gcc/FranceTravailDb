@@ -79,7 +79,7 @@ def main(departement):
     
     #connect to the database
     db = DB()
-    
     print("Start of processing" ,len(path_list), "files\n")
     add_batch_to_db(path_list, db)
+
 main(74)
