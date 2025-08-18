@@ -20,6 +20,7 @@ class DB:
             id INTEGER PRIMARY KEY,
             hash BLOB
         );""")
+        print("Data base initialisation: OK")
 
     def print_table(self):
         print("Start lecture")

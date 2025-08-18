@@ -3,7 +3,7 @@ import hashlib
 import pandas as pd
 import os
 import base64
-import database_manag
+import database_manage
 
 def get_files_lst(dirpath):
     try:
@@ -26,13 +26,13 @@ def get_obj_json(filepath):
 def main():
 
     #get file list to check
-    dirpath = "/home/cc/Documents/data_worker/ftdb/data/74/2025-08-18T00:29:06.296Z"
+    dirpath = "/home/cc/Documents/data_worker/ftdb/data/74/2025-08-18T13:46:44.631Z"
     files_list = get_files_lst(dirpath)
     if(files_list == None or len(files_list) <= 0):
         return
     
     #connect to the database
-    db = database_manag.DB()
+    db = database_manage.DB()
     db.create_random_table()
     db.print_table()
     
