@@ -40,6 +40,13 @@ npm install
 npm run dev
 
 ```
+
+or 
+
+``` makefile
+    make data
+```
+
 ## Processing Machine (Python)
 
 ``` bash
@@ -47,6 +54,12 @@ npm run dev
 cd processing machine
 python3 processing machine.py
 
+```
+
+or 
+
+``` makefile
+    make sort
 ```
 
 # 🛠️ Technologies utilisées
