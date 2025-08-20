@@ -16,6 +16,7 @@ Il est composé de trois modules principaux :
 
 Les annonces, calibrées selon les restrictions de l’API, sont stockées dans des fichiers JSON de la forme :
 
+```
 {
     "resultat": [
         {obj},
@@ -24,6 +25,7 @@ Les annonces, calibrées selon les restrictions de l’API, sont stockées dans 
         {obj}
     ]
 }
+```
 
 Chaque objet est contrôlé puis inséré dans la base de données SQLite.
 
