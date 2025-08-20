@@ -3,26 +3,33 @@
 ![Alt text](/doc/general_structure.png)
 
 
-Cette outils extrait les offres d'emploi du jours par departement à travers l'api de france travail.
-Il est composé de trois module: un job scrapper en typescript, une machine de traitement en python et une data base sqlite.
+Cet outil permet d’extraire les offres d’emploi quotidiennes par département à travers l’API de France Travail.
+Il est composé de trois modules principaux :
 
++ Job Scraper → collecte les annonces via l’API (TypeScript).
 
-Les batch d'annonce calibré d'apres les restriction api sont stoker d'apres la strucnture:
++ Processing Machine → traite et nettoie les données (Python).
 
-```
-    {
++ SQLite Database → stocke les annonces au format bytes.
+
+📂 Structure des batchs
+
+Les annonces, calibrées selon les restrictions de l’API, sont stockées dans des fichiers JSON de la forme :
+
+{
     "resultat": [
-            {obj},
-            {obj},
-            {obj},
-            {obj},
-        ]
-    }
-```
-Chaque object est controlé et stocker dans la base de donnée au format Bytes.
+        {obj},
+        {obj},
+        {obj},
+        {obj}
+    ]
+}
 
+Chaque objet est contrôlé puis inséré dans la base de données SQLite.
 
-# Job scrapper
+# 🚀 Installation & Exécution
+
+## job_scrapper (TypeScript)
 
 ``` bash
 
@@ -31,7 +38,7 @@ npm install
 npm run dev
 
 ```
-# processing machine
+## Processing Machine (Python)
 
 ``` bash
 
@@ -40,5 +47,10 @@ python3 processing machine.py
 
 ```
 
+# 🛠️ Technologies utilisées
 
+TypeScript / Node.js → collecte et appels API
 
+Python → traitement et transformation des données
+
+SQLite → stockage local léger et rapide
