@@ -17,7 +17,7 @@ export class Extract_day
     incomplet_batch: number;
     obj_date: Extract_date_roll_back;
     header_status: number;
-    counter: number
+
     constructor(token: Token, departement: string, obj_date: Extract_date_roll_back)
     {
         this.token = token;
@@ -29,7 +29,6 @@ export class Extract_day
         this.complet_batch = 0;
         this.incomplet_batch = 0;
         this.header_status = 0;
-        this.counter = 0;
     }
     async get_header_data()
     {
@@ -51,8 +50,6 @@ export class Extract_day
             {      
                 this.header_status = 1; 
                 this.total_size_day = Number(reponse.headers['content-range'].split('/')[1]);
-                //console.log(this.total_size_day)
-
                 this.size_range = Number(reponse.headers['content-range'].split('/')[0].split('-')[1]);
                 if(this.total_size_day > 0 && this.size_range > 0)
                 {
@@ -115,7 +112,7 @@ export class Extract_day
         if(this.incomplet_batch > 0 && first_page < last_page)
         {
             const range_param = `${String(first_page)}-${String(last_page)}`
-            const construct_url  = `${url_base}?range=${range_param}&departement=${this.departement}&minCreationDate=${this.obj_date.dateLeft.toISOString().split('.')[0] + 'Z'}&maxCreationDate=${this.obj_date.dateRight.toISOString().split('.')[0] + 'Z'}`;
+            const construct_url  = `${url_base}?range=${range_param}&departement=${this.departement}`;
             this.url_promise?.push(construct_url);
         }
        

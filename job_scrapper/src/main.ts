@@ -8,7 +8,65 @@ import {sleep} from "./utils/utils"
 
 
 //try catch here    
-async function extract_day_job(token: Token, roller_date:Extract_date_roll_back, roller: Extract_day )
+
+async function process_promises(roller: Extract_day, token: Token, idx: number) {
+    
+    //console.log(roller.url_promise)
+
+    // try catch here
+    
+    try {
+        const res  =  roller.url_promise?.map(ur => {
+            return axios.get(ur, {
+                headers: {
+                    Authorization: `Bearer ${token.access_token}`
+                }
+            })
+        })
+        if(res)
+        {
+            const r = await Promise.all(res)
+            r.forEach((res, i) => {
+                //console.log(`Réponse ${roller.counter + 1}:`, res.statusText);
+                /*
+                    file systeme managment. departement/date/date-range-batch_size-total_size
+                */
+                const creation_date = roller.obj_date.dateRight.toISOString();
+                if(!fs.existsSync(`/home/cc/Documents/france_travail_worker/data/${roller.departement}`))
+                    fs.mkdirSync('/home/cc/Documents/france_travail_worker/data/'+roller.departement)
+                fs.writeFileSync(`/home/cc/Documents/france_travail_worker/data/${roller.departement}/${creation_date}-${roller.counter}`, JSON.stringify(res.data, null, 2));
+                roller.counter++;
+            });
+        }
+    } catch (e)
+    {
+        console.log("Error")
+    }
+    
+}
+
+function split_promise_arr(promises: string[])
+{
+    let i = 0;
+    const max_size_batch = 8
+    const len = promises.length;
+    let result = []
+    while(promises.length > 0)
+    {
+        let j = 0;
+        let res = [];
+        while (j < max_size_batch && promises.length > 0)
+        {
+            res.push(promises[0])
+            promises.shift()
+            j++;
+        }
+        result.push(res);
+    }
+    return(result)
+}
+
+async function extract_day_job(token: Token, roller: Extract_day )
 {
     
     /* 
@@ -16,34 +74,41 @@ async function extract_day_job(token: Token, roller_date:Extract_date_roll_back,
         Optimisation is possible with saving the first call who de objectif is to get information about day dta
     */
     
-    if(roller.url_promise)
-    {
-        const res  =  roller.url_promise.map(ur => {
-            return axios.get(ur, {
-                headers: {
-                    Authorization: `Bearer ${token.access_token}`
-                }
-            })
-        })
 
-        const r = (await axios.all(res))
-        .forEach((res, i) => {
-            console.log(`Réponse ${i + 1}:`, res.statusText);
-            /*
-                file systeme managment. departement/date/date-range-batch_size-total_size
-            */
-        const creation_date = roller.obj_date.dateRight.toISOString();
-            if(!fs.existsSync(`/home/cc/Documents/data_worker/data/${roller.departement}`))
-                fs.mkdirSync('/home/cc/Documents/data_worker/data/'+roller.departement)
-            if(!fs.existsSync(`/home/cc/Documents/data_worker/data/${roller.departement}/${creation_date}`))
-                fs.mkdirSync(`/home/cc/Documents/data_worker/data/${roller.departement}/${creation_date}`)
-            fs.writeFileSync(`/home/cc/Documents/data_worker/data/${roller.departement}/${creation_date}/${creation_date}-${i}`, JSON.stringify(res.data, null, 2));
-        });
+    /* 
+        probleme, parfois le nombre de promise est trop grand generant une erreur 429 de la part du serveur
+        limite: 10 promise de 150 annonce
+
+        solution: spliter le tableau de promises
+    
+    */
+   if(roller.url_promise)
+    {
+        //roller.url_promise = roller.url_promise.slice(0,10);
+        // Si le nombre d'url promise est plus petit ou egal a 10 , traiter dirrectement le tableau de promesse. sinon spliter le tableau
+        if(roller.url_promise.length > 0 && roller.url_promise.length <= 8)
+            await process_promises(roller, token, 1);
+        else
+        {
+
+            //here
+            let splited_arr: string[][];
+            splited_arr = split_promise_arr(roller.url_promise);
+            let i = 0
+            while (i < splited_arr.length)
+            {
+                //console.log("split", splited_arr[i])
+                roller.url_promise = splited_arr[i];
+                await process_promises(roller, token, i);
+                await sleep(800)
+                i++;
+            }
+        }
     }
 }
 
 
-async function departement_worker( departement: string, from: Date, to: Date) {
+async function departement_worker( departement: string) {
 
 
     const token: Token | null = await getToken();
@@ -52,54 +117,25 @@ async function departement_worker( departement: string, from: Date, to: Date) {
         console.log("Error token\n");
         return;
     }
-    const one_day = 1000 * 60  * 60 * 24;
-    const range_ms = from.getTime() - to.getTime();
-    const range_size = Math.round(range_ms / one_day);
-    let idx = 1
-
+   
     const date_roller = new Extract_date_roll_back();
     const roller: Extract_day | null = new Extract_day(token,departement,date_roller);
 
     //range size = how many day back
-    while(idx < 2)
-    {
-        console.log(`Iteration ${idx}`);
-        await roller.get_header_data();
-        roller.create_promise_url()
-        
-        if(roller.header_status == 1)
-        {
-            await extract_day_job( token,  date_roller, roller);
+    await roller.get_header_data();
+    
+    roller.create_promise_url()
+    if(roller.header_status == 1)
+        await extract_day_job( token, roller);
+    await sleep(400);
 
-        }
-        console.log("size of day ", roller.total_size_day)
-        if(roller.total_size_day > 1000)
-            await sleep(10000);
-        else if(roller.total_size_day > 800)
-            await sleep(5000);
-        else
-            await sleep(500);
-
-        date_roller.set_new_date();
-        roller.reinit(token,departement,date_roller);
-        idx++;
-    }
 }
 
 async function run_extraction(departement:string)
 {
     
     dotenv.config();
-
-    
-    const from = new Date();
-    const to = new Date();
-    const day_range = 3;
-
-    //from.setDate(from.getDate() - 1);
-    to.setDate(from.getDate() - day_range);
-    console.log("from : " + from.toISOString() + " To: ", to.toISOString(),` for department: ${departement}`);
-    await departement_worker(departement, from, to)
+    await departement_worker(departement)
 }
 
 
@@ -109,68 +145,54 @@ function get_departement(dep: number): string
     if(dep < 10)
         return( '0' + dep);
     else if(dep == 200)
-        return("2a")
+        return("2A")
     else if(dep == 201)
-        return("2b");
+        return("2B");
     else if(dep > 95)
         return(String(dep + 875))
     return(String(dep));
 }
 
-// async function get_good_folder_day(date: Date, departement: string): Promise<string | undefined>
-// {
-//     const dirr = "./data/" + departement;
-//     const files = await fs.readdir(dirr.toString());
-//     const file = files.find((f) => f.split("T",2)[0] == date.toISOString().split("T",2)[0] )
-//     console.log("file: " + file);
-//     return (file);
-// }
-
 async function main(argv: number)
 {
-    let i = 13;
+    let i = 1;
     let corse = 0;
     let departement;
-    let date = new Date();
 
-    if(argv)
+    console.log("start");
+    if(argv == 0)
     {
-        console.log("argv == 10");
-        console.log("La date est " + date.toISOString());
-        //let path: string | undefined =  await get_good_folder_day(date,"74");
-        //console.log("le folder de travail est: " + path);
-    }
-    else
-    {
-        while(i <= 101)
-        {
-            console.log("start");
-            if(i == 20)
-            {
-                if(corse == 0)
-                {
-                    departement = get_departement(200);
-                    corse = 1;
-                    continue;
-                }
-                else
-                {
-                    console.log("departement: ", get_departement(201))
-                    departement = get_departement(201);
-                    i++;
-                    continue;
-                }
-            }
-            // departement = get_departement(i);
-            // await run_extraction(departement);
-
-            i++;
-            
-        }
-        departement = get_departement(74);
+        departement = get_departement(69);
         await run_extraction(departement);
+        return ;
     }
-    
+    while(i <= 101)
+    {
+        if(i == 20)
+        {
+            
+            if(corse == 0)
+            {
+                departement = get_departement(200);
+                console.log(get_departement(200))
+                corse = 1;
+                await run_extraction(departement);
+                continue;
+            }
+            else
+            {
+                console.log(get_departement(201))
+                departement = get_departement(201);
+                await run_extraction(departement);
+                i++;
+                continue;
+            }
+        }
+        departement = get_departement(i);
+        await run_extraction(departement);
+        console.log(departement)
+        i++;
+    }
 }
 
-main(0);
+main(1);

@@ -3,10 +3,11 @@ OBJS_COMP = src/data/rome_competences/**/*
 NAME= offres_emploi
 ORIGIN =  $(shell git branch --show-current)
 COM=default_push
-
+NPM   := /home/cc/.nvm/versions/node/v22.18.0/bin/npm
+NODE  := /home/cc/.nvm/versions/node/v22.18.0/bin/node
 SORTER_NAME = sorting_machine.py
 
-git: clean
+git: aclean
 
 	git add . 
 	git commit -m $(COM) 
@@ -14,17 +15,23 @@ git: clean
 
 clean:
 	rm -rf data/*
+	rm -rf sorting_machine/__pycache__
 
-fclean: clean
+cleandb:
+	rm -f db/annonces.db
+
+fclean: clean cleandb
+	
+aclean: clean 
 	rm -rf node_modules
 
 data:
-	cd job_scrapper && npm run dev
+	cd /home/cc/Documents/france_travail_worker/job_scrapper && $(NPM) run dev
 
 t: 
 	npm run test
 
 sort:
-	cd sorting_machine && python3 $(SORTER_NAME)
+	cd /home/cc/Documents/france_travail_worker/sorting_machine && python3 $(SORTER_NAME)
 
 .PHONY: data
