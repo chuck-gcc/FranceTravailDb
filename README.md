@@ -1,6 +1,15 @@
-# FranceTravailDb
+# France Travail job warehouse data
 
-Job offer Extraction day worker.
+
+
+Cette outils extrait les offres d'emploi du jours par departement à travers l'api de france travail.
+Il est composé de trois module: un job scrapper en typescript, une machine de traitement en python et une data base sqlite.
+
+{
+    J'aime typage fort de typescript pour la communication avec les api
+    J'ai choisie de traiter les donner avec python pour la pratique du language
+    Sqlite 
+}
 
 
 actual time scraping:           2 min 13. Amelioration : mutiplier le nombre de cle api and passer en mode stream? ecouter le flux
