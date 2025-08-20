@@ -27,6 +27,7 @@ def get_path_liste(dirpath):
         print("open folder Error ", dirpath)
         return(None)
     if(len(files_list) <= 0):
+        print("Nothing to process")
         return (None)
     #print("files list" , files_list)
     for file in files_list:
@@ -82,6 +83,7 @@ def main():
 
     i = 1
     is_corse = 0
+    print("start of machine")
     while i <= 101:
         
         if(i == 20):
@@ -113,5 +115,6 @@ def main():
             is_corse = 1
             continue
         i+=1
+    print("Machine off")
 
 main()
