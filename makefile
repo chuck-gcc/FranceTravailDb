@@ -23,7 +23,7 @@ cleandb:
 fclean: clean cleandb
 	
 aclean: clean 
-	rm -rf node_modules
+	rm -rf /job_scrapper/node_modules
 
 data:
 	cd /home/cc/Documents/france_travail_worker/job_scrapper && $(NPM) run dev
@@ -34,4 +34,4 @@ t:
 sort:
 	cd /home/cc/Documents/france_travail_worker/sorting_machine && python3 $(SORTER_NAME)
 
-.PHONY: data
+.PHONY: data sort t aclean fclean cleandb

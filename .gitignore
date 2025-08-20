@@ -1,0 +1,8 @@
+job_scrapper/.env
+job_scrapper/src/.DS_Store
+job_scrapper/.DS_Store
+job_scrapper/node_modules\
+job_scrapper/main2.ts
+job_scrapper/.vscode\
+db/*
+
