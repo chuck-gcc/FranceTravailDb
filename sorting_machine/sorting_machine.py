@@ -58,6 +58,7 @@ def process_batch_path(path_list, db:DB):
             hash = str(offer_hash.hexdigest())                      # convert hash obj to str hexadigest
             processed += 1                                          # update the processed counter
             is_on_db = filter(lambda x: x[0] == hash, hash_table)   # filter hash table
+            #print("table asked")
             if(len(list(is_on_db)) == 0):                           # check the result of the filter
                 db.update_offers_table(binary_offer, hash)          # if not in hash table add to the db
                 add += 1                                            # update the add offert counter
@@ -118,5 +119,23 @@ def main():
         i+=1
     print("Machine off")
     db.db.close()
+
+def test():
+    dirlen = os.listdir('../data')
+    f = filter(lambda j: j == '2As', dirlen)
+    print(list(f))
+
+def test2():
+
+    hash = "fd1329020c0e3fce736c8333f7a8605f8f47d970efe2686ab9947ac193df8a39"
+    hash2 = "fd13s9020c0e3fce736c8333f7a8605f8f47d970efe2686ab9947ac193df8a39"
+
+    db = DB(74)
+    table = db.get_hash_table()
+    is_on_db = filter(lambda x: x[0] == hash, table)
+    is_on_db = filter(lambda x: x[0] == hash2, table)
+
+    print(db.is_on_db(hash))
+    print(db.is_on_db(hash2))
 
 main()

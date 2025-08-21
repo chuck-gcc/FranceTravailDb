@@ -6,15 +6,15 @@ from datetime import datetime, date, time, timezone
 
 def connect_to_db():
     try:
-        con = sqlite3.connect("../db/annonces.db")
+        con = sqlite3.connect("db/annonces.db")
         return(con)
     except:
         print("Error connection db")
 
 
 class DB: 
-    
     def __init__(self, department):
+        self.ask = 0
         self.date = ""
         self.department = department
         self.db = connect_to_db()
@@ -57,9 +57,11 @@ class DB:
         """DROP TABLE (?);""", name)
     
     #convert binary offer to hash and check the hash table 
-    def is_on_db(self, binary_offer: bytes, hash: str):
+    def is_on_db(self, hash: str):
         
         self.cursor.execute("""SELECT hash FROM offers_hash WHERE hash = ?""",(hash,))
+        self.ask += 1
+        #print("Ask table ", self.ask, " departement ", self.department)
         result = self.cursor.fetchall()
         if(len(result) == 0):
             #print(hash)
@@ -81,7 +83,7 @@ class DB:
         self.set_date()
         self.update_hash_table(hash, self.date)
         self.cursor.execute("""INSERT INTO offers (offer, offer_hash, date) VALUES (?,?,?)""", (binary_offer,hash,self.date,))
-        #print("UPDATE offerts table")
+        print("UPDATE offerts table")
     
     def update_extraction_table(self, process, add, department):
         self.set_date()
