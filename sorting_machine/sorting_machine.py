@@ -43,25 +43,25 @@ def process_batch_path(path_list, db:DB):
     #two variable for table
     processed = 0
     add = 0 
-    hash_table = db.get_hash_table()
-
+    
+    hash_table = db.get_hash_table()                                # get the hash table check in db. This is better, only one call to the db
     for path in path_list:
         # for each path, get the result object to process
         offers = get_offerts_result(path)
 
         #result processing
         for offer in offers:
-            json_offer = json.dumps(offer)                      # convert obj from dict to string
-            binary_offer = bytes(json_offer,'utf-8')            # convert the offer string to the bytes
-            offer_hash = hashlib.sha256()                       # create hash object using sha256
-            offer_hash.update(binary_offer)                     # update the hash object with the binary offer
-            hash = str(offer_hash.hexdigest())                  # convert hash obj to str hexadigest
-            processed += 1                                      # update the processed counter
-            is_on_db = filter(lambda x: x[0] == hash, hash_table) 
-            if(len(list(is_on_db)) == 0):                                       # check the hash table offers
-                db.update_offers_table(binary_offer, hash)      # if not in hash table add to the db
-                add += 1                                        # update the add offert counter
-        #os.remove(path)                                         #remove file
+            json_offer = json.dumps(offer)                          # convert obj from dict to string
+            binary_offer = bytes(json_offer,'utf-8')                # convert the offer string to the bytes
+            offer_hash = hashlib.sha256()                           # create hash object using sha256
+            offer_hash.update(binary_offer)                         # update the hash object with the binary offer
+            hash = str(offer_hash.hexdigest())                      # convert hash obj to str hexadigest
+            processed += 1                                          # update the processed counter
+            is_on_db = filter(lambda x: x[0] == hash, hash_table)   # filter hash table
+            if(len(list(is_on_db)) == 0):                           # check the result of the filter
+                db.update_offers_table(binary_offer, hash)          # if not in hash table add to the db
+                add += 1                                            # update the add offert counter
+        #os.remove(path)                                            #remove file
 
     db.update_extraction_table(processed,add, db.department)                                                                                                                           #update extraction table
     
