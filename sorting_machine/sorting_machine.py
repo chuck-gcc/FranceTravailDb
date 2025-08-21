@@ -43,6 +43,7 @@ def process_batch_path(path_list, db:DB):
     #two variable for table
     processed = 0
     add = 0 
+    hash_table = db.get_hash_table()
 
     for path in path_list:
         # for each path, get the result object to process
@@ -56,10 +57,11 @@ def process_batch_path(path_list, db:DB):
             offer_hash.update(binary_offer)                     # update the hash object with the binary offer
             hash = str(offer_hash.hexdigest())                  # convert hash obj to str hexadigest
             processed += 1                                      # update the processed counter
-            if(db.is_on_db(binary_offer, hash) == 0):           # check the hash table offers
+            is_on_db = filter(lambda x: x[0] == hash, hash_table) 
+            if(len(list(is_on_db)) == 0):                                       # check the hash table offers
                 db.update_offers_table(binary_offer, hash)      # if not in hash table add to the db
                 add += 1                                        # update the add offert counter
-        os.remove(path)                                         #remove file
+        #os.remove(path)                                         #remove file
 
     db.update_extraction_table(processed,add, db.department)                                                                                                                           #update extraction table
     
@@ -99,7 +101,7 @@ def main():
             else:
                 departement = get_department(i)
         #get file list to check
-        dirpath = '/home/cc/Documents/france_travail_worker/data/'+ departement
+        dirpath = '../data/'+ departement
         
         # get the list path of files to process
         path_list = get_path_liste(dirpath)
@@ -109,12 +111,12 @@ def main():
         
         #connect to the database
         db = DB(str(departement))
-        #print("Start of processing" ,len(path_list), "files\n")
         process_batch_path(path_list, db)
         if(i == 20 and is_corse == 0):
             is_corse = 1
             continue
         i+=1
     print("Machine off")
+    db.db.close()
 
 main()

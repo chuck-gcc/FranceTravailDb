@@ -1,6 +1,7 @@
 
 import sqlite3
 import datetime
+import json
 from datetime import datetime, date, time, timezone
 
 def connect_to_db():
@@ -64,6 +65,12 @@ class DB:
             #print(hash)
             return(0)
         return(1)
+
+    def get_hash_table(self):
+        self.cursor.execute("""SELECT hash FROM offers_hash""")
+        result = self.cursor.fetchall()
+        return(result)
+
 
     def update_hash_table(self, hash: str, date:str):
         self.cursor.execute(""" INSERT INTO offers_hash (hash,date) VALUES (?, ?) """, (hash,date,))

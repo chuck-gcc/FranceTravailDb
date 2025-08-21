@@ -32,9 +32,11 @@ async function process_promises(roller: Extract_day, token: Token, idx: number) 
                     file systeme managment. departement/date/date-range-batch_size-total_size
                 */
                 const creation_date = roller.obj_date.dateRight.toISOString();
-                if(!fs.existsSync(`/home/cc/Documents/france_travail_worker/data/${roller.departement}`))
-                    fs.mkdirSync('/home/cc/Documents/france_travail_worker/data/'+roller.departement)
-                fs.writeFileSync(`/home/cc/Documents/france_travail_worker/data/${roller.departement}/${creation_date}-${roller.counter}`, JSON.stringify(res.data, null, 2));
+                if(!fs.existsSync(`../data`))
+                    fs.mkdirSync('../data')
+                if(!fs.existsSync(`../data/${roller.departement}`))
+                    fs.mkdirSync('../data/'+roller.departement)
+                fs.writeFileSync(`../data/${roller.departement}/${creation_date}-${roller.counter}`, JSON.stringify(res.data, null, 2));
                 roller.counter++;
             });
         }

@@ -3,9 +3,12 @@ OBJS_COMP = src/data/rome_competences/**/*
 NAME= offres_emploi
 ORIGIN =  $(shell git branch --show-current)
 COM=default_push
-NPM   := /home/cc/.nvm/versions/node/v22.18.0/bin/npm
-NODE  := /home/cc/.nvm/versions/node/v22.18.0/bin/node
+# NPM   := /home/cc/.nvm/versions/node/v22.18.0/bin/npm
+# NODE  := /home/cc/.nvm/versions/node/v22.18.0/bin/node
 SORTER_NAME = sorting_machine.py
+
+NPM= $(shell which npm)
+NODE= $(shell which node)
 
 git: aclean
 
@@ -23,15 +26,13 @@ cleandb:
 fclean: clean cleandb
 	
 aclean: clean 
-	rm -rf node_modules
+	rm -rf /job_scrapper/node_modules
 
 data:
-	cd /home/cc/Documents/france_travail_worker/job_scrapper && $(NPM) run dev
+	cd $(PWD)/job_scrapper && $(NPM) run dev
 
-t: 
-	npm run test
 
 sort:
-	cd /home/cc/Documents/france_travail_worker/sorting_machine && python3 $(SORTER_NAME)
+	cd $(PWD)/sorting_machine && python3 $(SORTER_NAME)
 
-.PHONY: data
+.PHONY: data sort aclean fclean cleandb
