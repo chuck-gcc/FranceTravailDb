@@ -3,8 +3,6 @@ OBJS_COMP = src/data/rome_competences/**/*
 NAME= offres_emploi
 ORIGIN =  $(shell git branch --show-current)
 COM=default_push
-# NPM   := /home/cc/.nvm/versions/node/v22.18.0/bin/npm
-# NODE  := /home/cc/.nvm/versions/node/v22.18.0/bin/node
 SORTER_NAME = sorting_machine.py
 
 NPM= $(shell which npm)
